@@ -44,7 +44,7 @@ var camera = {
 
 var transformation = {
     rotation : {
-        rad : 0
+        rad : 0.75
     },
     translation : {
         x : 1/3,
@@ -68,37 +68,9 @@ var light = {
 
 var rubiksCube;
 
-var piecesTranslations = [
-    [0, 0, 0], // middle layer
-    [1, 0, 0],
-    [-1, 0, 0],
-    [0, 0, 1],
-    [0, 0, -1],
-    [1, 0, 1],
-    [1, 0, -1],
-    [-1, 0, 1],
-    [-1, 0, -1],
+var first = true;
+var lastTimeStamp = 0;
 
-    [0, 1, 0], // upper layer
-    [1, 1, 0],
-    [-1, 1, 0],
-    [0, 1, 1],
-    [0, 1, -1],
-    [1, 1, 1],
-    [1, 1, -1],
-    [-1, 1, 1],
-    [-1, 1, -1],
-
-    [0, -1, 0], // bottom layer
-    [1, -1, 0],
-    [-1, -1, 0],
-    [0, -1, 1],
-    [0, -1, -1],
-    [1, -1, 1],
-    [1, -1, -1],
-    [-1, -1, 1],
-    [-1, -1, -1]
-];
 
 /**
  * Startup function to be called when the body is loaded
@@ -110,7 +82,7 @@ function startup() {
     initGL();
     window.addEventListener('keyup', onKeyup, false);
     window.addEventListener('keydown', onKeydown, false);
-    drawAnimated(0);
+    window.requestAnimationFrame (drawAnimated);
 }
 
 /**
@@ -146,11 +118,20 @@ function setUpAttributesAndUniforms() {
 
 function drawAnimated(timeStamp) {
 
+    var timeElapsed = 0;
+    if (first) {
+        lastTimeStamp = timeStamp;
+        first = false;
+    } else {
+        timeElapsed = timeStamp - lastTimeStamp;
+        lastTimeStamp = timeStamp;
+    }
+
     if (isDown(key.LEFT)) {
-        light.position.x += 0.1;
+        transformation.rotation.rad -= 0.02;
     }
     if (isDown(key.RIGHT)) {
-        light.position.x -= 0.1;
+        transformation.rotation.rad += 0.02;
     }
     if (isDown(key.UP)) {
         light.position.y += 0.1;
@@ -163,13 +144,6 @@ function drawAnimated(timeStamp) {
     }
     if (isDown(key.S)) {
         light.position.z -= 0.1;
-    }
-
-    console.log("Light X: "+light.position.x+"\nLight Y: "+light.position.y+"\nLight Z: "+light.position.z);
-
-    transformation.rotation.rad += 0.02;
-    if (transformation.rotation.rad > 360) {
-        transformation.rotation.rad = 0;
     }
 
     draw();
@@ -189,7 +163,7 @@ function draw() {
     var normalMatrix = mat3.create();
     var viewMatrix = mat4.create();
 
-    gl.uniform1i(ctx.uEnableLightingId , 1);
+    gl.uniform1i(ctx.uEnableLightingId , 0);
 
     gl.uniform3f(ctx.uLightPositionId, light.position.x, light.position.y, light.position.z);
     gl.uniform3f(ctx.uLightColorId, light.color.r, light.color.g, light.color.b);
@@ -198,21 +172,7 @@ function draw() {
     mat4.perspective(projectionMatrix, glMatrix.toRadian(90), gl.drawingBufferWidth / gl.drawingBufferHeight, 1, 10);
     gl.uniformMatrix4fv(ctx.uProjectionMatId, false, projectionMatrix);
 
-    drawCubePieces(modelMat, viewMatrix, normalMatrix);
-
-}
-
-function drawCubePieces(modelMat, viewMatrix, normalMatrix) {
-    for (var i = 0; i < piecesTranslations.length; i++) {
-        var pieceTranslation = piecesTranslations[i];
-        mat4.rotate(modelMat, viewMatrix, transformation.rotation.rad, vec3.fromValues(0, 1,0));
-        mat4.translate(modelMat, modelMat, [pieceTranslation[0]*transformation.translation.x, pieceTranslation[1]*transformation.translation.y, pieceTranslation[2]*transformation.translation.z]);
-        mat4.scale(modelMat, modelMat, [1/3 - 0.01, 1/3 - 0.01, 1/3 - 0.01]);
-        gl.uniformMatrix4fv(ctx.uModelViewMatrixId, false, modelMat);
-        mat3.normalFromMat4(normalMatrix, modelMat);
-        gl.uniformMatrix3fv(ctx.uNormalMatrixId, false, normalMatrix);
-        rubiksCube.draw(gl, ctx.aVertexPositionId, ctx.aVertexColorId, ctx.aVertexNormalId);
-    }
+    rubiksCube.draw(gl, modelMat, viewMatrix, normalMatrix);
 }
 
 // Key Handling

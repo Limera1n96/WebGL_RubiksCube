@@ -8,10 +8,10 @@
  */
 function Cube(gl, colors) {
 
-    var backColor = colors[0];
-    var frontColor = colors[1];
-    var rightColor = colors[2];
-    var leftColor = colors[3];
+    var backColor = colors[1];
+    var frontColor = colors[0];
+    var rightColor = colors[3];
+    var leftColor = colors[2];
     var topColor = colors[4];
     var bottomColor = colors[5];
 
