@@ -62,18 +62,40 @@ function RubiksCube(gl) {
 
     return {
 
-        draw : function(gl, modelMat, viewMatrix, normalMatrix) {
+        draw : function(gl, modelViewMatrix, viewMatrix, normalMatrix) {
             for (var i = 0; i < pieces.length; i++) {
                 var piece = pieces[i];
-                mat4.rotate(modelMat, viewMatrix, transformation.rotation.rad, vec3.fromValues(0, 1,0));
-                mat4.translate(modelMat, modelMat, [piece[0]*transformation.translation.x, piece[1]*transformation.translation.y, piece[2]*transformation.translation.z]);
-                mat4.scale(modelMat, modelMat, [1/3 - 0.01, 1/3 - 0.01, 1/3 - 0.01]);
-                gl.uniformMatrix4fv(ctx.uModelViewMatrixId, false, modelMat);
-                mat3.normalFromMat4(normalMatrix, modelMat);
+                mat4.rotate(modelViewMatrix, viewMatrix, transformation.rotation.rad, vec3.fromValues(0, 1,0));
+                this.rotateSide(gl, piece, modelViewMatrix);
+                mat4.translate(modelViewMatrix, modelViewMatrix, [piece[0]*transformation.translation.x, piece[1]*transformation.translation.y, piece[2]*transformation.translation.z]);
+                mat4.scale(modelViewMatrix, modelViewMatrix, [1/3 - 0.01, 1/3 - 0.01, 1/3 - 0.01]);
+                gl.uniformMatrix4fv(ctx.uModelViewMatrixId, false, modelViewMatrix);
+                mat3.normalFromMat4(normalMatrix, modelViewMatrix);
                 gl.uniformMatrix3fv(ctx.uNormalMatrixId, false, normalMatrix);
                 var pieceColors = getPieceColors(piece);
                 var cube = new Cube(gl, pieceColors);
                 cube.draw(gl, ctx.aVertexPositionId, ctx.aVertexColorId, ctx.aVertexNormalId);
+            }
+        },
+
+        rotateSide : function (gl, piece, modelViewMatrix) {
+            if (piece[0] == -1 && transformation.rotation.rTurn > 0) {
+                mat4.rotate(modelViewMatrix, modelViewMatrix, transformation.rotation.rTurn, vec3.fromValues(1, 0,0));
+            }
+            if (piece[0] == 1 && transformation.rotation.lTurn > 0) {
+                mat4.rotate(modelViewMatrix, modelViewMatrix, -transformation.rotation.lTurn, vec3.fromValues(1, 0,0));
+            }
+            if (piece[1] == 1 && transformation.rotation.uTurn > 0) {
+                mat4.rotate(modelViewMatrix, modelViewMatrix, -transformation.rotation.uTurn, vec3.fromValues(0, 1,0));
+            }
+            if (piece[1] == -1 && transformation.rotation.dTurn > 0) {
+                mat4.rotate(modelViewMatrix, modelViewMatrix, transformation.rotation.dTurn, vec3.fromValues(0, 1,0));
+            }
+            if (piece[2] == 1 && transformation.rotation.bTurn > 0) {
+                mat4.rotate(modelViewMatrix, modelViewMatrix, -transformation.rotation.bTurn, vec3.fromValues(0, 0,1));
+            }
+            if (piece[2] == -1 && transformation.rotation.fTurn > 0) {
+                mat4.rotate(modelViewMatrix, modelViewMatrix, transformation.rotation.fTurn, vec3.fromValues(0, 0,1));
             }
         }
     }

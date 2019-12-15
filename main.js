@@ -44,7 +44,23 @@ var camera = {
 
 var transformation = {
     rotation : {
-        rad : 0.75
+        rad : 0.75,
+        uTurn : 0,
+        rTurn : 0,
+        lTurn : 0,
+        fTurn : 0,
+        dTurn : 0,
+        bTurn : 0,
+        mTurn : 0,
+        angle : {
+            u : 0,
+            r : 0,
+            l : 0,
+            f : 0,
+            d : 0,
+            b : 0,
+            m : 0
+        }
     },
     translation : {
         x : 1/3,
@@ -67,10 +83,6 @@ var light = {
 };
 
 var rubiksCube;
-
-var first = true;
-var lastTimeStamp = 0;
-
 
 /**
  * Startup function to be called when the body is loaded
@@ -117,33 +129,67 @@ function setUpAttributesAndUniforms() {
 }
 
 function drawAnimated(timeStamp) {
-
-    var timeElapsed = 0;
-    if (first) {
-        lastTimeStamp = timeStamp;
-        first = false;
-    } else {
-        timeElapsed = timeStamp - lastTimeStamp;
-        lastTimeStamp = timeStamp;
-    }
-
+    updateKeyDown();
     if (isDown(key.LEFT)) {
         transformation.rotation.rad -= 0.02;
     }
     if (isDown(key.RIGHT)) {
         transformation.rotation.rad += 0.02;
     }
-    if (isDown(key.UP)) {
-        light.position.y += 0.1;
+
+    if (keyDown.uKey) {
+        if (transformation.rotation.angle.u < Math.PI/2) {
+            transformation.rotation.angle.u += Math.PI/20;
+            transformation.rotation.uTurn += Math.PI/20;
+        } else {
+            keyDown.uKey = false;
+            transformation.rotation.angle.u = 0;
+        }
     }
-    if (isDown(key.DOWN)) {
-        light.position.y -= 0.1;
+    if (keyDown.rKey) {
+        if (transformation.rotation.angle.r < Math.PI/2) {
+            transformation.rotation.angle.r += Math.PI/20;
+            transformation.rotation.rTurn += Math.PI/20;
+        } else {
+            keyDown.rKey = false;
+            transformation.rotation.angle.r = 0;
+        }
     }
-    if (isDown(key.W)) {
-        light.position.z += 0.1;
+    if (keyDown.lKey) {
+        if (transformation.rotation.angle.l < Math.PI/2) {
+            transformation.rotation.angle.l += Math.PI/20;
+            transformation.rotation.lTurn += Math.PI/20;
+        } else {
+            keyDown.lKey = false;
+            transformation.rotation.angle.l = 0;
+        }
     }
-    if (isDown(key.S)) {
-        light.position.z -= 0.1;
+    if (keyDown.fKey) {
+        if (transformation.rotation.angle.f < Math.PI/2) {
+            transformation.rotation.angle.f += Math.PI/20;
+            transformation.rotation.fTurn += Math.PI/20;
+        } else {
+            keyDown.fKey = false;
+            transformation.rotation.angle.f = 0;
+        }
+    }
+    if (keyDown.dKey) {
+        if (transformation.rotation.angle.d < Math.PI/2) {
+            transformation.rotation.angle.d += Math.PI/20;
+            transformation.rotation.dTurn += Math.PI/20;
+        } else {
+            keyDown.dKey = false;
+            transformation.rotation.angle.d = 0;
+        }
+    }
+    if (keyDown.bKey) {
+        if (transformation.rotation.angle.b < Math.PI/2) {
+            transformation.rotation.angle.b += Math.PI/20;
+            transformation.rotation.bTurn += Math.PI/20;
+        } else {
+            keyDown.bKey = false;
+            transformation.rotation.angle.b = 0;
+        }
     }
 
     draw();
@@ -158,7 +204,7 @@ function draw() {
     "use strict";
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    var modelMat = mat4.create();
+    var modelViewMatrix = mat4.create();
     var projectionMatrix = mat4.create();
     var normalMatrix = mat3.create();
     var viewMatrix = mat4.create();
@@ -172,13 +218,35 @@ function draw() {
     mat4.perspective(projectionMatrix, glMatrix.toRadian(90), gl.drawingBufferWidth / gl.drawingBufferHeight, 1, 10);
     gl.uniformMatrix4fv(ctx.uProjectionMatId, false, projectionMatrix);
 
-    rubiksCube.draw(gl, modelMat, viewMatrix, normalMatrix);
+    rubiksCube.draw(gl, modelViewMatrix, viewMatrix, normalMatrix);
 }
 
-// Key Handling
+function updateKeyDown() {
+    if (isDown(key.U)) {
+        keyDown.uKey = true;
+    }
+    if (isDown(key.R)) {
+        keyDown.rKey = true;
+    }
+    if (isDown(key.L)) {
+        keyDown.lKey = true;
+    }
+    if (isDown(key.F)) {
+        keyDown.fKey = true;
+    }
+    if (isDown(key.D)) {
+        keyDown.dKey = true;
+    }
+    if (isDown(key.B)) {
+        keyDown.bKey = true;
+    }
+    if (isDown(key.M)) {
+        keyDown.mKey = true;
+    }
+}
+
 var key = {
     _pressed : {},
-
     LEFT : 37,
     UP : 38,
     RIGHT : 39,
@@ -186,7 +254,23 @@ var key = {
     W : 87,
     A : 65,
     S : 83,
-    D : 68
+    D : 68,
+    L : 76,
+    R : 82,
+    U : 85,
+    F : 70,
+    M : 77,
+    B : 66
+};
+
+var keyDown = {
+    uKey : false,
+    rKey : false,
+    lKey : false,
+    fKey : false,
+    dKey : false,
+    bKey : false,
+    mKey : false
 };
 
 function isDown (keyCode) {
