@@ -1,5 +1,5 @@
 # WebGL Rubik's Cube
-A simulation of the Rubik's Cube developed in WebGL
+This project contains a simulation of the Rubik's Cube developed in WebGL.
 
 ### How to use
 Use the following keys to turn the cube (clockwise):
@@ -9,6 +9,8 @@ Use the following keys to turn the cube (clockwise):
 * F: front side
 * D: bottom side
 * B: back side
+
+Additionally, you can turn the whole cube using the arrow keys.
 
 
 ### What it looks like:
