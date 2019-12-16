@@ -44,7 +44,8 @@ var camera = {
 
 var transformation = {
     rotation : {
-        rad : 0.75,
+        x : 0.25,
+        y : 0.75,
         uTurn : 0,
         rTurn : 0,
         lTurn : 0,
@@ -71,7 +72,7 @@ var transformation = {
 
 var light = {
     position : {
-        x : 0.75,
+        x : 0.5,
         y : 0.5,
         z : 0.5
     },
@@ -131,19 +132,27 @@ function setUpAttributesAndUniforms() {
 function drawAnimated(timeStamp) {
     updateKeyDown();
     if (isDown(key.LEFT)) {
-        transformation.rotation.rad -= 0.02;
+        transformation.rotation.y -= 0.02;
     }
     if (isDown(key.RIGHT)) {
-        transformation.rotation.rad += 0.02;
+        transformation.rotation.y += 0.02;
+    }
+    if (isDown(key.UP)) {
+        transformation.rotation.x += 0.02;
+    }
+    if (isDown(key.DOWN)) {
+        transformation.rotation.x -= 0.02;
     }
 
     if (keyDown.uKey) {
         if (transformation.rotation.angle.u < Math.PI/2) {
             transformation.rotation.angle.u += Math.PI/20;
-            transformation.rotation.uTurn += Math.PI/20;
+            transformation.rotation.uTurn = transformation.rotation.angle.u;
         } else {
-            keyDown.uKey = false;
+            rubiksCube.adjustPiecesPosition("u");
             transformation.rotation.angle.u = 0;
+            transformation.rotation.uTurn = 0;
+            keyDown.uKey = false;
         }
     }
     if (keyDown.rKey) {
@@ -151,8 +160,10 @@ function drawAnimated(timeStamp) {
             transformation.rotation.angle.r += Math.PI/20;
             transformation.rotation.rTurn += Math.PI/20;
         } else {
-            keyDown.rKey = false;
+            rubiksCube.adjustPiecesPosition("r");
             transformation.rotation.angle.r = 0;
+            transformation.rotation.rTurn = 0;
+            keyDown.rKey = false;
         }
     }
     if (keyDown.lKey) {
@@ -160,8 +171,10 @@ function drawAnimated(timeStamp) {
             transformation.rotation.angle.l += Math.PI/20;
             transformation.rotation.lTurn += Math.PI/20;
         } else {
-            keyDown.lKey = false;
+            rubiksCube.adjustPiecesPosition("l");
             transformation.rotation.angle.l = 0;
+            transformation.rotation.lTurn = 0;
+            keyDown.lKey = false;
         }
     }
     if (keyDown.fKey) {
@@ -169,8 +182,10 @@ function drawAnimated(timeStamp) {
             transformation.rotation.angle.f += Math.PI/20;
             transformation.rotation.fTurn += Math.PI/20;
         } else {
-            keyDown.fKey = false;
+            rubiksCube.adjustPiecesPosition("f");
             transformation.rotation.angle.f = 0;
+            transformation.rotation.fTurn = 0;
+            keyDown.fKey = false;
         }
     }
     if (keyDown.dKey) {
@@ -178,8 +193,10 @@ function drawAnimated(timeStamp) {
             transformation.rotation.angle.d += Math.PI/20;
             transformation.rotation.dTurn += Math.PI/20;
         } else {
-            keyDown.dKey = false;
+            rubiksCube.adjustPiecesPosition("d");
             transformation.rotation.angle.d = 0;
+            transformation.rotation.dTurn = 0;
+            keyDown.dKey = false;
         }
     }
     if (keyDown.bKey) {
@@ -187,8 +204,10 @@ function drawAnimated(timeStamp) {
             transformation.rotation.angle.b += Math.PI/20;
             transformation.rotation.bTurn += Math.PI/20;
         } else {
-            keyDown.bKey = false;
+            rubiksCube.adjustPiecesPosition("b");
             transformation.rotation.angle.b = 0;
+            transformation.rotation.bTurn = 0;
+            keyDown.bKey = false;
         }
     }
 
@@ -209,7 +228,7 @@ function draw() {
     var normalMatrix = mat3.create();
     var viewMatrix = mat4.create();
 
-    gl.uniform1i(ctx.uEnableLightingId , 0);
+    gl.uniform1i(ctx.uEnableLightingId , 1);
 
     gl.uniform3f(ctx.uLightPositionId, light.position.x, light.position.y, light.position.z);
     gl.uniform3f(ctx.uLightColorId, light.color.r, light.color.g, light.color.b);
