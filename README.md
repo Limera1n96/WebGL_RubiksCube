@@ -11,6 +11,6 @@ Use the following keys to turn the cube (clockwise):
 * B: back side
 
 
-###What it looks like:
+### What it looks like:
 
 ![Example screenshot](https://raw.githubusercontent.com/Limera1n96/WebGL_RubiksCube/master/pictures/screenshot.png)
