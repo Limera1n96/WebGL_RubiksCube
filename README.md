@@ -13,4 +13,4 @@ Use the following keys to turn the cube (clockwise):
 
 ### What it looks like:
 
-![Example screenshot](https://raw.githubusercontent.com/Limera1n96/WebGL_RubiksCube/master/pictures/screenshot.png)
+![Example screenshot](https://raw.githubusercontent.com/Limera1n96/WebGL_RubiksCube/master/pictures/screenshot.png?token=ABTM3EUC7P6DWKQZ4HS4WOC566EQK)
